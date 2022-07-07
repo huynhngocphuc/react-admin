@@ -1,0 +1,66 @@
+.fix-create-action {
+  position: absolute;
+  top: 8px;
+  right: 15px;
+}
+.fix-cart-product {
+  height: 200px !important;
+  width: 300px !important;
+  margin: auto;
+  overflow: hidden;
+}
+.fix-img-product {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+.fix-margin {
+  margin: auto;
+  padding-top: 1%;
+}
+
+.fix-create {
+  margin-left: 77%;
+}
+.fix-action {
+  font-size: 20px;
+  margin: 5px;
+}
+
+.model{
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: black;
+}
+
+.modal-content {
+  position: relative;
+  background-color: white; /* Max width where it stops expanding */
+  /* Height in proportion to its parent container */
+  margin: auto; /* Auto margin according to the element width */
+  padding: 10px;
+  border: 1px solid black;
+  border-radius: 10px; /* Optional. Rounds container corners */
+}
+/* Close button */
+.close_button {
+  color: #fff;
+  background-color: #999;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 15px;
+  border-radius: 50%;
+  border: 2px solid #333;
+}
+.close_button:hover,
+.close_button:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  outline: none;
+}
