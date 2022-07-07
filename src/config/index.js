@@ -1,6 +1,6 @@
 export const config = {
     api: {
-        url: 'http://localhost:8080/admin'
+        url: 'http://banlinhkien-env.eba-83eehmua.us-west-2.elasticbeanstalk.com'
     },
     firebaseConfig: {
         apiKey: "AIzaSyAGXEK1PU-mNzOuCAyHWTFZ3ih2EiHtI_8",
