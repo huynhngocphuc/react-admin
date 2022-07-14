@@ -118,6 +118,8 @@ class OrderStatus3 extends Component {
     console.log("dữ liệu this.props.", this.props)
     const { searchText, total, statusPage } = this.state;
 
+    console.log(orders)
+
     return (
       <div className="content-inner">
         {/* Page Header*/}
@@ -179,7 +181,7 @@ class OrderStatus3 extends Component {
                             return (
                               <tr key={index}>
                                 <th scope="row">{item.orderId}</th>
-                                <td>{item.customerFKDto.fullnameCustomer}</td>
+                                <td>{item.customerFKDto.lastName}</td>
                                 <td>{item.phoneNumber}</td>
                                 <td>
                                   <div className="col">

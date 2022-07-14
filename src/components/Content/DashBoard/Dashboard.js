@@ -62,8 +62,8 @@ class Dashboard extends Component {
     
 
     const from = startDateRevenue.getFullYear() + "-" + (startDateRevenue.getMonth() + 1) + "-" + startDateRevenue.getDate() + " " + "00:00:00";
-    const to = endDateRevenue.getFullYear() + "-" + (endDateRevenue.getMonth() + 1) + "-" + endDateRevenue.getDate() + " " + "00:00:00";
-    const dateCurent = dateNow.getFullYear() + "-" + (dateNow.getMonth() + 1) + "-" + dateNow.getDate() + " " + "00:00:00";
+    const to = endDateRevenue.getFullYear() + "-" + (endDateRevenue.getMonth() + 1) + "-" + endDateRevenue.getDate() + " " + "23:50:00";
+    const dateCurent = dateNow.getFullYear() + "-" + (dateNow.getMonth() + 1) + "-" + dateNow.getDate() + " " + "23:58:00";
    if((new Date(from).getTime()) >= (new Date(to).getTime()))
    {
      toast.error('Ngày bắt đầu nhỏ hơn ngày kết thúc')
