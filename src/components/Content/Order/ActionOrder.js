@@ -70,7 +70,7 @@ class ActionOrder extends Component {
         let orderDetailAmount = 0;
         const { history } = this.props
         console.log("props trong action", history)
-        console.log(dataOrderDetails)
+        console.log("ủ ủa",dataOrderDetails)
         
         return (
 
@@ -134,7 +134,7 @@ class ActionOrder extends Component {
                                                                                             <td>{item.nameProduct}</td>
                                                                                             <td>
                                                                                                 <div className="fix-cart">
-                                                                                                    <img src={item && item.productImageSet >0 ? item.productImageSet[0].image : null} className="fix-img" alt="not found" />
+                                                                                                    <img src={item.productImageSet[0].image} className="fix-img" alt="not found" />
                                                                                                 </div>
                                                                                             </td>
                                                                                             <td>{item.quantity}</td>
