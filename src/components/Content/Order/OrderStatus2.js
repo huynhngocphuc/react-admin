@@ -175,7 +175,7 @@ class OrderStatus2 extends Component {
                             return (
                               <tr key={index}>
                                 <th scope="row">{item.orderId}</th>
-                                <td>{item.customerFKDto.fullnameCustomer}</td>
+                                <td>{item.customerFKDto.lastName}</td>
                                 <td>{item.phoneNumber}</td>
                                 <td>
                                   <div className="col">
