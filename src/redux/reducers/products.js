@@ -21,8 +21,9 @@ const products = (state = initialState, action) => {
             state.push(action.data);
             return [...state];
         case Types.REMOVE_PRODUCT:
-            index = findIndexs(action.id, state);
-            state.splice(index, 1);
+            // index = findIndexs(action.id, state);
+            // state.splice(index, 1);
+            state = action.Products
             return [...state];
         case Types.EDIT_PRODUCT:
             index = findIndexs(action.data.id, state);

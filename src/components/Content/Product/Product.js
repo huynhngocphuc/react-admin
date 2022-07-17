@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import './style.css'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { actFetchProductsRequest, actDeleteProductRequest, actGetProductOfKeyRequest, actGetProductOfCatagoryRequest } from '../../../redux/actions/product';
+import { actFetchProductsRequest, actDeleteProductRequest, actGetProductOfKeyRequest, actGetProductOfCatagoryRequest,actActiveProductRequest } from '../../../redux/actions/product';
 import { actFetchCategoriesRequest } from '../../../redux/actions/category';
-
+import Switch from "react-switch";
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import MyFooter from '../../MyFooter/MyFooter'
@@ -45,7 +45,7 @@ class Product extends Component {
 
   }
   async pageChange(content) {
-    const { searchText, category,currentPage } = this.state
+    const { searchText, category, currentPage } = this.state
     const page = content;
     if (category == "All") {
       if (is_empty(searchText)) {
@@ -66,7 +66,7 @@ class Product extends Component {
       }
     }
     else {
-      const res = await this.props.find_products_by_catagory(category,page)
+      const res = await this.props.find_products_by_catagory(category, page)
       if (res && res.status == 200) {
         this.setState(
           {
@@ -81,7 +81,8 @@ class Product extends Component {
     window.scrollTo(0, 0);
 
   }
-  handleRemove = (id, name) => {
+  handleRemove = (id,currentPage,name) => {
+    // console.log(currentPage )
     MySwal.fire({
       title: `Xóa sản phẩm ${name} ?`,
       text: "Bạn chắc chắn muốn xóa sản phẩm này !",
@@ -92,7 +93,7 @@ class Product extends Component {
       confirmButtonText: 'Yes'
     }).then(async (result) => {
       if (result.value) {
-        await this.props.delete_product(id, token);
+        await this.props.delete_product(id,currentPage, token);
         Swal.fire(
           'Đã xóa!',
           'Sản phẩm của bạn đã được xóa.',
@@ -101,6 +102,11 @@ class Product extends Component {
       }
     })
   }
+  handleActive = async (id,currentPage,name) => {
+   
+    await this.props.active_product(id,currentPage, token);
+  }
+
   handleChange = event => {
     const name = event.target.name;
     const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
@@ -115,9 +121,9 @@ class Product extends Component {
     this.setState({
       category: value
     });
-    
+
     if (value == "All") {
-      
+
       const resdata = await this.props.fetch_products("1");
       if (resdata && resdata.status === 200) {
         this.setState({
@@ -129,7 +135,7 @@ class Product extends Component {
     else {
       const res = await this.props.find_products_by_catagory(value)
       if (res && res.status == 200) {
-        
+
         this.setState(
           {
             currentPage: res.data.currentPage,
@@ -153,9 +159,12 @@ class Product extends Component {
     }
   }
 
+
+
   render() {
     let { products } = this.props;
     const { searchText, total, dataCategory, category, currentPage } = this.state;
+    console.log(products)
     return (
       <div className="content-inner">
         {/* Page Header*/}
@@ -228,13 +237,16 @@ class Product extends Component {
                       <table className="table table-hover">
                         <thead>
                           <tr>
+
                             <th>Tên sản phẩm</th>
+                            <th style={{ textAlign: "center" }}>Ảnh</th>
                             <th>Mô tả</th>
                             <th>Giá</th>
                             <th>Tồn kho</th>
                             {/* <th>Properties</th> */}
-                            <th style={{ textAlign: "center" }}>Ảnh</th>
-                            <th style={{ textAlign: "center" }}>Chức năng</th>
+
+                            <th style={{ textAlign: "center" }}>sửa</th>
+                            <th>trạng thái</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -243,26 +255,39 @@ class Product extends Component {
                               <tr key={index}>
 
                                 <td>{item.productName}</td>
-                                <td><p className="text-truncate" style={{ width: 300 }}>{item.descriptionProduct}</p></td>
-                                <td>{item.unitPrice.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</td>
-                                <td>{item.quantity}</td>
-                                {/* <td>{item.properties}</td> */}
                                 <td style={{ textAlign: "center" }}>
                                   <div className="fix-cart">
                                     <img src={item && item.productImageSet ? item.productImageSet[0].image : null} className="fix-img" alt="not found" />
                                   </div>
                                 </td>
+                                <td><p className="text-truncate" style={{ width: 300 }}>{item.descriptionProduct}</p></td>
+                                <td>{item.unitPrice.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</td>
+                                <td>{item.quantity}</td>
+                                {/* <td>{item.properties}</td> */}
+
                                 <td style={{ textAlign: "center" }}>
                                   <div>
                                     <span title='Edit' className="fix-action"><Link to={`/products/edit/${item.productId}`}> <i className="fa fa-edit"></i></Link></span>
-                                    <span
+                                    {/* <span
                                       onClick={() => this.handleRemove(item.productId, item.productName)}
                                       title='Delete'
                                       className="fix-action">
                                       <Link to="#">
                                         <i className="fa fa-trash" style={{ color: '#ff00008f' }}></i>
-                                      </Link></span>
+                                      </Link>
+                                    </span> */}
                                   </div>
+
+                                </td>
+                                <td>
+                                  {
+                                    item.isDelete == 'NO' ? 
+                                    <Switch onChange={() => this.handleRemove(item.productId, currentPage, item.productName)} checked={true} />
+                                    : 
+                                    <Switch onChange={() => this.handleActive(item.productId, currentPage, item.productName)} checked={false} />
+                                    
+                                  }
+                                  
                                 </td>
                               </tr>
                             )
@@ -311,8 +336,11 @@ const mapDispatchToProps = (dispatch) => {
     find_products: (searchText, page) => {
       return dispatch(actGetProductOfKeyRequest(searchText, page))
     },
-    delete_product: (id) => {
-      dispatch(actDeleteProductRequest(id))
+    delete_product: (id,currentPage) => {
+      dispatch(actDeleteProductRequest(id,currentPage))
+    },
+    active_product: (id,currentPage) => {
+      dispatch(actActiveProductRequest(id,currentPage))
     }
 
   }

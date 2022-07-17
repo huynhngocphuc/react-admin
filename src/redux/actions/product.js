@@ -4,29 +4,7 @@ import callApi from '../../utils/apiCaller';
 import { toast } from 'react-toastify';
 import { actShowLoading, actHiddenLoading } from './loading'
 import 'react-toastify/dist/ReactToastify.css';
-
-
-// export const actFetchProductsRequest = (page) => {
-//   const newPage = page === null || page === undefined ? 1 : page;
-//   return dispatch => {
-//     dispatch(actShowLoading());
-//     return new Promise((resolve, reject) => {
-//       callApi(`product/all?page=${newPage}`, 'GET', null)
-//         .then(res => {
-//           if (res && res.status === 200) {
-//             dispatch(actFetchProducts(res.data.listProduct));
-//             resolve(res.data);
-//             setTimeout(function () { dispatch(actHiddenLoading()) }, 200);
-//           }
-//         })
-//         .catch(err => {
-//           console.log(err);
-//           reject(err);
-//           setTimeout(function () { dispatch(actHiddenLoading()) }, 200);
-//         });
-//     });
-//   };
-// };
+import { is_empty } from '../../utils/validations';
 
 export const actFetchProductsRequest = (page) => {
   const newPage = page === null || page === undefined ? 1 : page;
@@ -38,30 +16,7 @@ export const actFetchProductsRequest = (page) => {
     return res;
   };
 };
-// return dispatch => {
-//   dispatch(actShowLoading());
-//   return new Promise((resolve, reject) => {
-//       callApi(`view/product/search?keyword=${newKey}&page=${newPage}`, 'GET')
-//           .then(res => {
-//               if (res && res.status === 200) {
-//                   localStorage.setItem("_keyword",newKey)
-//                   console.log("trả về rồi lala",res.data)
-//                   const newKeyPage = {key:newKey,totalPage: res.data.totalPage}
-//                   dispatch(actFetchProducts(res.data.listProduct));
-//                   dispatch(actFetchKeySearch(newKeyPage));
-//                   console.log("lưu search",newKeyPage)
-//                   resolve(res.data);
-//                   setTimeout(function () { dispatch(actHiddenLoading()) }, 200);
-//               }
-//           })
-//           .catch(err => {
-//               console.log(err);
-//               reject(err);
-//               setTimeout(function () { dispatch(actHiddenLoading()) }, 200);
-//           });
-//   });
-// };
-// search
+
 export const actGetProductOfKeyRequest = (key, page) => {
   const newPage = page === null || page === undefined ? 1 : page
   const newKey = (key === undefined || key === '' || key === null) ? 'laptop' : key
@@ -127,16 +82,41 @@ export const actAddProduct = (data) => {
   }
 }
 
-export const actDeleteProductRequest = (id) => {
+export const actDeleteProductRequest = (id,page) => {
+  let newpage = is_empty(page) ? 1 : page;
+  const data = {
+    isDelete: "YES"
+  }
   return async dispatch => {
-    await callApi(`product/delete/${id}`, 'PUT', null);
-    dispatch(actDeleteProduct(id));
+    const res = await callApi(`product/delete/${id}?page=${newpage}`, 'PUT', data);
+    if(res && res.status == 200)
+    {
+      dispatch(actDeleteProduct(res.data.listProduct));
+    }
+    
   }
 }
-export const actDeleteProduct = (id) => {
+
+export const actActiveProductRequest = (id,page) => {
+  let newpage = is_empty(page) ? 1 : page;
+  const data = {
+    isDelete: "NO"
+  }
+  return async dispatch => {
+ 
+    const res = await callApi(`product/delete/${id}?page=${newpage}`, 'PUT', data);
+    if(res && res.status == 200)
+    {
+      dispatch(actDeleteProduct(res.data.listProduct));
+     
+    }
+    
+  }
+}
+export const actDeleteProduct = (Products) => {
   return {
     type: Types.REMOVE_PRODUCT,
-    id
+    Products
   }
 }
 
