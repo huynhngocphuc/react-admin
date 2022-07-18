@@ -15,6 +15,8 @@ class ActionOrder extends Component {
             orderId: '',
             totalAmount: 0,
             itemAmount: 0,
+            addressOrder:'',
+            phoneNumber:'',
             dataOrderDetails: []
         };
         id = this.props.id
@@ -33,6 +35,8 @@ class ActionOrder extends Component {
                 orderId: res.data.id,
                 totalAmount: res.data.totalAmount,
                 itemAmount: resOrderDetails.length,
+                addressOrder: res.data.address,
+                phoneNumber: res.data.phoneNumber,
                 dataOrderDetails: resOrderDetails
             })
         } else {
@@ -66,7 +70,7 @@ class ActionOrder extends Component {
 
 
     render() {
-        const { nameCustomer, orderId, totalAmount, itemAmount, dataOrderDetails } = this.state;
+        const { nameCustomer, orderId,addressOrder, phoneNumber,totalAmount, itemAmount, dataOrderDetails } = this.state;
         let orderDetailAmount = 0;
         const { history } = this.props
         console.log("props trong action", history)
@@ -104,6 +108,16 @@ class ActionOrder extends Component {
                                                 <label className="col-sm-3 form-control-label">Tên khách hàng</label>
                                                 <div className="col-sm-9">
                                                     <input type="text" name="nameCustomer" value={nameCustomer} onChange={this.handleChange} className="form-control" />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-sm-3 form-control-label">Địa chỉ</label>
+                                                <div className="col-sm-5">
+                                                    <input type="text" name="addressOrder" value={addressOrder} onChange={this.handleChange} className="form-control" />
+                                                </div>
+                                                <label className="col-sm-2 form-control-label">Số điện thoại</label>
+                                                <div className="col-sm-2">
+                                                    <input type="text" name="phoneNumber" value={phoneNumber} onChange={this.handleChange} className="form-control" />
                                                 </div>
                                             </div>
 

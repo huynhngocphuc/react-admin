@@ -165,7 +165,7 @@ class OrderStatus2 extends Component {
                             <th>Tổng tiền</th>
                             <th>Ngày tạo HĐ</th>
                             <th>Chi tiết</th>
-                            <th>Duyệt
+                            <th>Xác nhận
 
                             </th>
                           </tr>
@@ -184,7 +184,7 @@ class OrderStatus2 extends Component {
                                   </div> </td>
                                 <td>{item.totalAmount}</td>
                                 <td>
-                                  <Moment format="DD/MM/YYYY">
+                                  <Moment format="YYYY/MM/DD">
                                     {item.createDate}
                                   </Moment>
                                 </td>

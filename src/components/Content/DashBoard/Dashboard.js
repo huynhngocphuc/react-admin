@@ -175,8 +175,7 @@ class Dashboard extends Component {
 
             <h3 style={{ paddingTop: 20 }}>Doanh thu theo thời gian</h3>
             <div className="row bg-white has-shadow">
-              <div className="col col-sm-6">
-
+              <div className="col col-sm-7">
                 <form onSubmit={this.onFormSubmit}>
                   <div className='row'>
                     <div className="col-md-6">
@@ -205,7 +204,7 @@ class Dashboard extends Component {
 
                 </form>
               </div>
-              <div className="col col-sm-6">
+              <div className="col col-sm-5">
                 <div className="item d-flex align-items-center">
                   <div className="icon bg-orange"><i className="icon icon-bill"></i></div>
                   <div className="title"><span>Tổng <br />doanh thu</span>

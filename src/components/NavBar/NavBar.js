@@ -52,6 +52,7 @@ class NavBar extends Component {
         <ul className="list-unstyled">
           <li><Link to="/"> <i className="icon-home" />Trang chủ</Link></li>
           <li><Link to="/orders/status1"> <i className="icon icon-bill" /> Đơn hàng </Link>
+          
             <ul className="list-unstyled">
               <li>
                 <Link to="/orders/status1"> Chờ duyệt
