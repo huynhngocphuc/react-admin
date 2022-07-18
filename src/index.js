@@ -24,8 +24,6 @@ ReactDOM.render(
       pauseOnVisibilityChange={false}
       
     />
-    
-    
   </Provider>,
  
   document.getElementById('root')

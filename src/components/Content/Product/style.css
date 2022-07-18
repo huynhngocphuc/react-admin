@@ -64,3 +64,6 @@
   cursor: pointer;
   outline: none;
 }
+.validation{
+  color: red;
+}

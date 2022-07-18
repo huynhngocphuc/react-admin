@@ -6,10 +6,12 @@ import { actAddProductRequest, actEditProductRequest } from '../../../redux/acti
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom';
 import callApi from '../../../utils/apiCaller';
+import Validator from '../../../utils/validator'
 import { uploadImage } from '../../../utils/upload'
 import Dropzone from 'react-dropzone';
 import { css } from '@emotion/core';
 import ClipLoader from 'react-spinners/ClipLoader';
+import { is_empty } from '../../../utils/validations';
 let token;
 let id;
 const override = css`
@@ -49,9 +51,80 @@ class ActionProduct extends Component {
       // hình để đưa ra giao diện
       redirectToProduct: false,
       loading: false,
+      errors: {}
     };
     id = this.props.id
+    const requiredWith = (value, field, state) => (!state[field] && !value) || !!value;
+    const isLengthString = (value, field, state) => {
+      let newvalue = 0;
+      // typeof(value) === ''
+      if (typeof (value) === 'string' && !is_empty(value)) {
+        newvalue = parseInt(value)
+
+      }
+      if (typeof (value) === 'number' && !is_empty(value)) {
+        newvalue = value
+
+      }
+      if (newvalue >= field.min) {
+        return true
+      }
+      return false;
+
+    }
+    const isLengthImage = (value, field, state) =>{
+     
+      if(state.filesImage.length > 0 || state.productImageSet.length> 0 ){
+        return true
+      }
+      if(value.length > field.min)
+      {
+        return true;
+      }
+      return false;
+    }
+
+
+    const rules = [
+      {
+        field: 'productName',
+        method: 'isEmpty',
+        validWhen: false,
+        message: 'Vui lòng nhập tên sản phẩm',
+      },
+      {
+        field: 'unitPrice',
+        method: isLengthString,
+        args: [{ min: 1 }],
+        validWhen: true,
+        message: 'Vui lòng nhập giá từ giá lớn hơn 0 ',
+      },
+      {
+        field: 'discount',
+        method: isLengthString,
+        args: [{ min: 0 }],
+        validWhen: true,
+        message: 'Vui lòng nhập giá giảm từ 0',
+      },
+      {
+        field: 'quantity',
+        method: isLengthString,
+        args: [{ min: 1 }],
+        validWhen: true,
+        message: 'Vui lòng nhập số lượng lớn hơn 0',
+      },
+      {
+        field: 'filesImage',
+        method: isLengthImage,
+        args: [{ min: 0 }],
+        validWhen: true,
+        message: 'Vui lòng thêm ảnh',
+      },
+    ];
+    this.validator = new Validator(rules);
+
   }
+
 
   async componentDidMount() {
     if (id) {
@@ -94,9 +167,10 @@ class ActionProduct extends Component {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
     this.setState({
-      [name]: value
+      [name]: value,
     });
   }
+
   handleChangeSelecProducer = (event) => {
     let value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
     this.setState({
@@ -126,7 +200,7 @@ class ActionProduct extends Component {
 
 
       filesImage.splice(id, 1)
-      console.log("vaof rooif", filesImage)
+     
 
       this.setState({
         filesImage
@@ -136,6 +210,10 @@ class ActionProduct extends Component {
   }
   handleSubmit = async (event) => {
     event.preventDefault();
+    await this.setState({
+      errors: this.validator.validate(this.state),
+    });
+
     const {
       productName,
       quantity,
@@ -145,60 +223,69 @@ class ActionProduct extends Component {
       categoryId,
       supplierId,
       filesImage,
-      productImageSet
+      productImageSet,
+      errors
     } = this.state;
 
     const newListImage = []
-    if(productImageSet.length>0){
-        productImageSet.map(item =>{
-        newListImage.push({ name: item.image})
-      })
-    }
-    this.setState({
-      loading: true
-    })
-    if (filesImage.length > 0)
-    for (const file of filesImage) {
-      const builder = await uploadImage(file);
-      newListImage.push({ name: builder});
-    }
-    // up ảnh firebase
-
-    const newProductName = productName === '' ? null : productName;
-    const newQuantity = parseInt(quantity);
-    const newDiscount = parseInt(discount);
-    const newUnitPrice = parseInt(unitPrice);
-    const newDescriptionProduct = descriptionProduct === '' ? 'không mô tả' : descriptionProduct;
-    const newCategoryId = parseInt(categoryId);
-    const newSupplierId = parseInt(supplierId);
-    // const newImage = productImage === '' ? 'http://via.placeholder.com/300x200' : productImage;
-    // console.log("image", newImage)
-    const newProduct = {
-      productName: newProductName,
-      quantity: newQuantity,
-      discount: newDiscount,
-      unitPrice: newUnitPrice,
-      descriptionProduct: newDescriptionProduct,
-      categoryId: newCategoryId,
-      supplierId: newSupplierId,
-      productImage: newListImage
-    }
-    if (!id) {
-      await this.props.add_Product(newProduct);
+    if ((JSON.stringify(errors) === '{}' )) {
+      
+      if (productImageSet.length > 0) {
+        productImageSet.map(item => {
+          newListImage.push({ name: item.image })
+        })
+      }
       this.setState({
-        loading: false,
-        redirectToProduct: true
+        loading: true
       })
+      if (filesImage.length > 0)
+        for (const file of filesImage) {
+          const builder = await uploadImage(file);
+          newListImage.push({ name: builder });
+        }
+      // up ảnh firebase
 
-    }
-    else {
-      await this.props.edit_Product(id, newProduct);
-      this.setState({
-        loading: false,
-        redirectToProduct: true
-      })
+      const newProductName = productName === '' ? null : productName;
+      const newQuantity = parseInt(quantity);
+      const newDiscount = parseInt(discount);
+      const newUnitPrice = parseInt(unitPrice);
+      const newDescriptionProduct = descriptionProduct === '' ? 'không mô tả' : descriptionProduct;
+      const newCategoryId = parseInt(categoryId);
+      const newSupplierId = parseInt(supplierId);
+      // const newImage = productImage === '' ? 'http://via.placeholder.com/300x200' : productImage;
+      // console.log("image", newImage)
+      const newProduct = {
+        productName: newProductName,
+        quantity: newQuantity,
+        discount: newDiscount,
+        unitPrice: newUnitPrice,
+        descriptionProduct: newDescriptionProduct,
+        categoryId: newCategoryId,
+        supplierId: newSupplierId,
+        productImage: newListImage
+      }
 
+      if (!id) {
+        const res = await this.props.add_Product(newProduct);
+        if(res && res.status == 200)
+        {
+          this.setState({
+            loading: false,
+            redirectToProduct: true
+          })
+        }
+        this.setState({loading:false})
+      }
+      else {
+        await this.props.edit_Product(id, newProduct);
+        this.setState({
+          loading: false,
+          redirectToProduct: true
+        })
+
+      }
     }
+
   }
   modules = {
     toolbar: [
@@ -218,11 +305,11 @@ class ActionProduct extends Component {
   ];
 
   render() {
-    const { productName, quantity, productImageSet, filesImage, discount, unitPrice, descriptionProduct, dataSupplieres, categoryId, dataCategories, supplierId, loading, redirectToProduct } = this.state;
+    const { productName, quantity, productImageSet, filesImage, discount, unitPrice, descriptionProduct, dataSupplieres, categoryId, dataCategories, supplierId, loading, redirectToProduct, errors } = this.state;
     if (redirectToProduct) {
       return <Redirect to='/products'></Redirect>
     }
-    console.log(productImageSet)
+ 
     return (
       <div className="content-inner">
         {/* Page Header*/}
@@ -247,10 +334,10 @@ class ActionProduct extends Component {
             <li className="breadcrumb-item"><Link to="/products">Sản phẩm</Link></li>
             {
               !id ?
-               <li className="breadcrumb-item active">thêm sản phẩm</li>
-               :<li className="breadcrumb-item active"> Sửa sản phẩm</li>
+                <li className="breadcrumb-item active">thêm sản phẩm</li>
+                : <li className="breadcrumb-item active"> Sửa sản phẩm</li>
             }
-            
+
           </ul>
         </div>
         {/* Forms Section*/}
@@ -275,7 +362,9 @@ class ActionProduct extends Component {
                             name="productName"
                             type="text"
                             className="form-control" />
+                          {errors.productName && <div className="validation" style={{ display: 'block' }}>{errors.productName}</div>}
                         </div>
+
                       </div>
                       <div className="line" />
                       {/* giá, số lượng */}
@@ -288,6 +377,8 @@ class ActionProduct extends Component {
                             name="unitPrice"
                             type="number"
                             className="form-control" />
+                          {errors.unitPrice && <div className="validation" style={{ display: 'block' }}>{errors.unitPrice}</div>}
+
                         </div>
                         <label className="col-sm-3 form-control-label" style={{ textAlign: 'center' }}>Số lượng</label>
                         <div className="col-sm-3">
@@ -297,6 +388,8 @@ class ActionProduct extends Component {
                             name="quantity"
                             type="number"
                             className="form-control" />
+                          {errors.quantity && <div className="validation" style={{ display: 'block' }}>{errors.quantity}</div>}
+
                         </div>
                         <label className="col-sm-3 form-control-label" >Giảm giá</label>
                         <div className="col-sm-3">
@@ -306,6 +399,7 @@ class ActionProduct extends Component {
                             name="discount"
                             type="number"
                             className="form-control" />
+                          {errors.discount && <div className="validation" style={{ display: 'block' }}>{errors.discount}</div>}
                         </div>
                       </div>
 
@@ -453,6 +547,12 @@ class ActionProduct extends Component {
                               </section>
                             )}
                           </Dropzone>
+                          {/* <div className="validation" style={{ display: 'block' }}>vui lòng chọn ảnh</div> */}
+                          {
+                            filesImage.length > 0 || productImageSet.length >0 ? null :
+                            errors.filesImage || errors.productImageSet ? <div className="validation" style={{ display: 'block' }}>{errors.filesImage ||errors.productImageSet}</div> : null
+                          }
+
                         </div>
                       </div>
                       {/* chức năng */}
@@ -479,7 +579,7 @@ class ActionProduct extends Component {
 const mapDispatchToProps = (dispatch) => {
   return {
     add_Product: (newProduct) => {
-      dispatch(actAddProductRequest(newProduct))
+      return dispatch(actAddProductRequest(newProduct))
     },
     edit_Product: (id, data) => {
       dispatch(actEditProductRequest(id, data))

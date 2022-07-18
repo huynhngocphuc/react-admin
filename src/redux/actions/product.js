@@ -73,6 +73,7 @@ export const actAddProductRequest = (data) => {
       console.log("dữ liệu trả về", res.data)
       dispatch(actAddProduct(res.data));
     }
+    return res
   }
 }
 export const actAddProduct = (data) => {
