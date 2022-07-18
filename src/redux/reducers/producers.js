@@ -3,8 +3,9 @@ let initialState = [];
 
 const findIndexs = (id, state) => {
     let result = -1;
+    
     state.forEach((item, index) => {
-        if (item.id === id) {
+        if (item.supplierId === id) {
             result = index;
         }
     });
