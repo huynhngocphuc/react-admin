@@ -184,7 +184,7 @@ class OrderStatus2 extends Component {
                                   </div> </td>
                                 <td>{item.totalAmount}</td>
                                 <td>
-                                  <Moment format="YYYY/MM/DD">
+                                  <Moment format="DD/MM/YYYY">
                                     {item.createDate}
                                   </Moment>
                                 </td>
@@ -196,7 +196,7 @@ class OrderStatus2 extends Component {
                                   </div>
                                 </td>
                                 <td>
-                                  <button className="btn btn-primary" value={item.orderId} onClick={this.handleBrowse} > Giao hàng</button>
+                                  <button className="btn btn-primary" value={item.orderId} onClick={this.handleBrowse} > Đã giao</button>
                                 </td>
                               </tr>
                             )

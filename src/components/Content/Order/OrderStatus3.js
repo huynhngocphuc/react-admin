@@ -191,7 +191,7 @@ class OrderStatus3 extends Component {
                                 </td>
                                 <td>{item.totalAmount}</td>
                                 <td>
-                                  <Moment format="YYYY/MM/DD">
+                                  <Moment format="DD/MM/YYYY">
                                     {item.createDate}
                                   </Moment>
                                 </td>
